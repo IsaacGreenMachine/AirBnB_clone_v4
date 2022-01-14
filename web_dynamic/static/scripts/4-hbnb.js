@@ -1,3 +1,57 @@
+function whichPostAreWeDoing (dict) {
+  if (dict === undefined) {
+    dict = '{}';
+  }
+  $.ajax({
+    method: 'POST',
+    url: 'http://127.0.0.1:5001/api/v1/places_search/',
+    contentType: 'application/json',
+    data: JSON.stringify(dict),
+    success: function (data) {
+      for (let i = 0; i < data.length; i++) {
+        const place = data[i];
+        $.get(
+          'http://127.0.0.1:5001/api/v1/users/' + place.user_id,
+          function (data) {
+            const personFirstName = data.first_name;
+            const personLastName = data.last_name;
+            $('.places').append(
+              '<article>' +
+              '<div class="title_box"><h2>' +
+              place.name +
+              '</h2>' +
+              '<div class="price_by_night">$' +
+              place.price_by_night +
+              '</div></div>' +
+              '<div class="information"><div class="max_guest">' +
+              place.max_guest +
+              (place.max_guest !== 1 ? ' Guests' : ' Guest') +
+              '</div>' +
+              '<div class="number_rooms">' +
+              place.number_rooms +
+              (place.number_rooms !== 1 ? ' Bedrooms' : ' Bedroom') +
+              '</div>' +
+              '<div class="number_bathrooms">' +
+              place.number_bathrooms +
+              (place.number_rooms !== 1 ? ' Bathrooms' : ' Bathroom') +
+              '</div>' +
+              '</div>' +
+              '<div class="user"><b>Owner: </b>' +
+              personFirstName +
+              ' ' +
+              personLastName +
+              '</div>' +
+              '<div class="description">' +
+              place.description +
+              '</div>' +
+              '</article>'
+            );
+          }
+        );
+      }
+    }
+  });
+}
 $(document).ready(function () {
   const newDic = {};
   $('input').click(function () {
@@ -23,6 +77,13 @@ $(document).ready(function () {
       $('#api_status').removeClass('available');
     }
   });
+  $('button').click(function () {
+    const newList = [];
+    for (const k in newDic) {
+      newList.push(newDic[k]);
+    }
+    whichPostAreWeDoing({ amenities: newList });
+  });
   $.ajax({
     method: 'POST',
     url: 'http://127.0.0.1:5001/api/v1/places_search/',
@@ -31,11 +92,9 @@ $(document).ready(function () {
     success: function (data) {
       for (let i = 0; i < data.length; i++) {
         const place = data[i];
-        console.log(place);
         $.get(
           'http://127.0.0.1:5001/api/v1/users/' + place.user_id,
           function (data) {
-            console.log(data);
             const personFirstName = data.first_name;
             const personLastName = data.last_name;
             $('.places').append(

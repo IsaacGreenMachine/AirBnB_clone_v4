@@ -1,4 +1,4 @@
-//http://0.0.0.0:5001/api/v1/status/
+// http://0.0.0.0:5001/api/v1/status/
 $(document).ready(function () {
   const newDic = {};
   $('input').click(function () {
