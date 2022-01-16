@@ -1,45 +1,58 @@
+// starts jquery actions when DOM is ready
 $(document).ready(function () {
   const newDic = {};
+  // when search button is clicked
   $('input').click(function () {
+    // for each checkbox that is checked:
     $(':input').each(function () {
       if (this.checked === true) {
+        // adds all checked amenities as {name: id} to newDic
         newDic[$(this).data('name')] = $(this).data('id');
       } else {
+        // removes any non-checked amenities from newDic
         delete newDic[$(this).data('name')];
       }
     });
     const list = [];
+    // adds all checked amenity names to list
     for (const key in newDic) {
       list.push(key);
     }
+    // lists all checked amenitiy names to h4 tag under "Amenities"
     $('.amenities h4').html(list.join(', '));
   });
+});
 
-  $.get('http://127.0.0.1:5001/api/v1/status/', function (data) {
-    // maybe switch to 0.0.0.0
-    if (data.status === 'OK') {
-      $('#api_status').addClass('available');
-    } else {
-      $('#api_status').removeClass('available');
-    }
-  });
-  $.ajax({
-    method: 'POST',
-    url: 'http://127.0.0.1:5001/api/v1/places_search/',
-    contentType: 'application/json',
-    data: '{}',
-    success: function (data) {
-      for (let i = 0; i < data.length; i++) {
-        const place = data[i];
-        console.log(place);
-        $.get(
-          'http://127.0.0.1:5001/api/v1/users/' + place.user_id,
-          function (data) {
-            console.log(data);
-            const personFirstName = data.first_name;
-            const personLastName = data.last_name;
-            $('.places').append(
-              '<article>' +
+// gets API status from status page
+$.get('http://127.0.0.1:5001/api/v1/status/', function (data) {
+  // maybe switch to 0.0.0.0
+  console.trace(data);
+  // changes color of status button using CSS available class
+  if (data.status === 'OK') {
+    $('#api_status').addClass('available');
+  } else {
+    $('#api_status').removeClass('available');
+  }
+});
+// post method to fetch filtered Place objects from website
+$.ajax({
+  method: 'POST',
+  url: 'http://127.0.0.1:5001/api/v1/places_search/',
+  contentType: 'application/json',
+  data: '{}',
+  // adds Place objects and data to HTML using append method
+  success: function (data) {
+    for (let i = 0; i < data.length; i++) {
+      const place = data[i];
+      console.log(place);
+      $.get(
+        'http://127.0.0.1:5001/api/v1/users/' + place.user_id,
+        function (data) {
+          console.log(data);
+          const personFirstName = data.first_name;
+          const personLastName = data.last_name;
+          $('.places').append(
+            '<article>' +
               '<div class="title_box"><h2>' +
               place.name +
               '</h2>' +
@@ -68,10 +81,9 @@ $(document).ready(function () {
               place.description +
               '</div>' +
               '</article>'
-            );
-          }
-        );
-      }
+          );
+        }
+      );
     }
-  });
+  }
 });
