@@ -4,14 +4,14 @@ function whichPostAreWeDoing (dict) {
   }
   $.ajax({
     method: 'POST',
-    url: 'http://127.0.0.1:5002/api/v1/places_search/',
+    url: 'http://127.0.0.1:5001/api/v1/places_search/',
     contentType: 'application/json',
     data: JSON.stringify(dict),
     success: function (data) {
       for (let i = 0; i < data.length; i++) {
         const place = data[i];
         $.get(
-          'http://127.0.0.1:5002/api/v1/users/' + place.user_id,
+          'http://127.0.0.1:5001/api/v1/users/' + place.user_id,
           function (data) {
             const personFirstName = data.first_name;
             const personLastName = data.last_name;
@@ -104,7 +104,7 @@ $(document).ready(function () {
     $('.locations h4').html(cityList.concat(stateList).sort().join(', '));
   });
 
-  $.get('http://127.0.0.1:5002/api/v1/status/', function (data) {
+  $.get('http://127.0.0.1:5001/api/v1/status/', function (data) {
     // maybe switch to 0.0.0.0
     if (data.status === 'OK') {
       $('#api_status').addClass('available');
@@ -130,14 +130,14 @@ $(document).ready(function () {
   });
   $.ajax({
     method: 'POST',
-    url: 'http://127.0.0.1:5002/api/v1/places_search/',
+    url: 'http://127.0.0.1:5001/api/v1/places_search/',
     contentType: 'application/json',
     data: '{}',
     success: function (data) {
       for (let i = 0; i < data.length; i++) {
         const place = data[i];
         $.get(
-          'http://127.0.0.1:5002/api/v1/users/' + place.user_id,
+          'http://127.0.0.1:5001/api/v1/users/' + place.user_id,
           function (data) {
             const personFirstName = data.first_name;
             const personLastName = data.last_name;
